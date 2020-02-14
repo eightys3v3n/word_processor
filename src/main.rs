@@ -44,7 +44,7 @@ fn main() {
     println!("Getting valid files...");
     let files = file_system::filter_extensions(files, extensions);
 
-    println!("Reading files...");
+    println!("Reading lines from files...");
     let words = file_system::read_files(files);
 
     println!("Deduplicating...");

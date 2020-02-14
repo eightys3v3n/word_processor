@@ -1,3 +1,9 @@
 [submodule "password_utilities"]
 	path = password_utilities
 	url = git@github.com:eightys3v3n/passwords.git
+[submodule "eng_word_frequencies"]
+	path = eng_word_frequencies
+	url = git@github.com:eightys3v3n/eng_word_frequencies.git
+[submodule "SecLists"]
+	path = SecLists
+	url = git@github.com:danielmiessler/SecLists.git

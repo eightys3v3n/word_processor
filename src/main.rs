@@ -5,6 +5,7 @@ mod processors;
 
 use clap::{App, Arg};
 use std::path::PathBuf;
+use std::process::exit;
 
 fn main() {
     let matches = App::new("Word Processor")
@@ -30,9 +31,9 @@ fn main() {
     let source_path = PathBuf::from(matches.value_of("source_path").unwrap_or("lists"));
     let output_path = PathBuf::from(matches.value_of("output_path").unwrap_or("output.lst"));
 
-    if ! source_path.exists(source_path) {
+    if !source_path.exists() {
         eprintln!("lists/ directory doesn't exist.");
-        return 1
+        exit(1);
     }
 
     let words = file_system::read_files(&source_path);

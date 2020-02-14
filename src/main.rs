@@ -53,7 +53,7 @@ fn main() {
     println!("Saving words...");
     file_system::write_words(&output_path, &words);
 
-    // Source path.
-    // Read all files from source_path.
-    // Output path; ask to overwrite.
 }
+
+// TODO: Profile this beast.
+// TODO: Time different deduplication options.

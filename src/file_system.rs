@@ -5,7 +5,7 @@ use std::io::prelude::*;
 use std::path::PathBuf;
 use std::vec::Vec;
 
-fn list_files(root: &PathBuf, recursive: bool) -> Vec<PathBuf> {
+pub fn list_files(root: &PathBuf, recursive: bool) -> Vec<PathBuf> {
     let mut files: Vec<PathBuf> = Vec::<PathBuf>::new();
 
     for res in fs::read_dir(root).unwrap() {
@@ -40,7 +40,10 @@ fn read_lines(path: &PathBuf) -> Vec<String> {
 
     for line in lines {
         let l: String = match line {
-            Err(why) => panic!("{}", why.description()),
+            Err(why) => {
+                eprintln!("error in file {}: {}", display, why.description());
+                String::from("")
+            }
             Ok(data) => data,
         };
 
@@ -52,9 +55,22 @@ fn read_lines(path: &PathBuf) -> Vec<String> {
     contents
 }
 
+/// Removes all files that don't have one of the given extensions.
+pub fn filter_extensions(files: Vec<PathBuf>, exts: Vec<&str>) -> Vec<PathBuf> {
+    files
+        .into_iter()
+        .filter(|f| match f.extension() {
+            None => false,
+            Some(ext) => match ext.to_str() {
+                None => false,
+                Some(ext) => exts.contains(&ext),
+            },
+        })
+        .collect()
+}
+
 /// Reads all files found in the given path and returns all words.
-pub fn read_files(path: &PathBuf) -> Vec<String> {
-    let files = list_files(path, true);
+pub fn read_files(files: Vec<PathBuf>) -> Vec<String> {
     let mut words: Vec<String> = Vec::<String>::new();
 
     for file in files {
@@ -154,6 +170,23 @@ mod tests {
             .collect();
 
         delete_tree(root);
+
+        assert_eq!(result, correct);
+    }
+
+    #[test]
+    fn test_filter_extensions() {
+        let files: Vec<PathBuf> = vec!["file.txt", "file.jpeg", "file.lst"]
+            .into_iter()
+            .map(PathBuf::from)
+            .collect();
+        let exts = vec!["txt", "lst"];
+        let correct: Vec<PathBuf> = vec!["file.txt", "file.lst"]
+            .into_iter()
+            .map(PathBuf::from)
+            .collect();
+
+        let result = filter_extensions(files, exts);
 
         assert_eq!(result, correct);
     }

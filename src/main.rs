@@ -8,6 +8,8 @@ use std::path::PathBuf;
 use std::process::exit;
 
 fn main() {
+    let extensions: Vec<&str> = vec!["txt", "lst"];
+
     let matches = App::new("Word Processor")
         .version("1.0")
         .author("Terrence Plunkett <eightys3v3n@gmail.com>")
@@ -36,9 +38,19 @@ fn main() {
         exit(1);
     }
 
-    let words = file_system::read_files(&source_path);
+    println!("Getting file list...");
+    let files = file_system::list_files(&source_path, true);
+
+    println!("Getting valid files...");
+    let files = file_system::filter_extensions(files, extensions);
+
+    println!("Reading files...");
+    let words = file_system::read_files(files);
+
+    println!("Deduplicating...");
     let words = processors::deduplicate(words);
 
+    println!("Saving words...");
     file_system::write_words(&output_path, &words);
 
     // Source path.

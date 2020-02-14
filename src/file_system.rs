@@ -76,6 +76,7 @@ pub fn read_files(files: Vec<PathBuf>) -> Vec<String> {
     for file in files {
         words.extend(read_lines(&file));
     }
+    words.shrink_to_fit();
 
     words
 }

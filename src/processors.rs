@@ -1,10 +1,17 @@
 use std::string::String;
 use std::vec::Vec;
+use std::collections::HashSet;
+use regex::Regex;
+use lazy_static::lazy_static;
 
 /// Remove duplicated words by sorting them.
 pub fn deduplicate(mut words: Vec<String>) -> Vec<String> {
-    words.sort_unstable();
-    words.dedup();
+    //words.sort_unstable();
+    //words.dedup();
+    //words
+
+    let set: HashSet<_> = words.drain(..).collect(); // dedup
+    words = set.into_iter().collect();
     words
 }
 
@@ -38,6 +45,58 @@ pub fn remove_outside_lengths(words: Vec<String>, min: usize, max: usize) -> Vec
     words
         .into_iter()
         .filter(|i| (i.len() >= min) & (i.len() <= max))
+        .collect()
+}
+
+fn trim_whitespace(word: String) -> String {
+    let word = trim(word, ' ');
+    let word = trim(word, '\n');
+    let word = trim(word, '\t');
+    return word;
+}
+
+fn trim(word: String, c: char) -> String {
+    let mut word = String::from(word);
+    
+    while word.starts_with(c) {
+        word = match word.get(1..) {
+            None => String::from(""),
+            Some(v) => String::from(v),
+        };
+    }
+    while word.ends_with(c) {
+        word = match word.get(..word.len()-1) {
+            None => String::from(""),
+            Some(v) => String::from(v),
+        };
+    }
+    return word;
+}
+
+pub fn trim_whitespaces(words: Vec<String>) -> Vec<String> {
+    words
+        .into_iter()
+        .map(trim_whitespace)
+        .collect()
+}
+
+pub fn remove_counts(words: Vec<String>) -> Vec<String> {
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r"\d+\s+(.*)").unwrap();
+    }
+
+    pub fn remove_count(mut word: String) -> String {
+        if RE.is_match(&word) {
+            let cap = RE.captures(&word).unwrap();
+            
+            word = String::from(cap.get(1).unwrap().as_str());
+        }
+
+        return word;
+    }
+    
+    words.into_iter()
+        .map(remove_count)
         .collect()
 }
 
@@ -104,6 +163,48 @@ mod test {
 
         let result = remove_outside_lengths(words, 3, 5);
 
+        assert_eq!(result, correct);
+    }
+
+    #[test]
+    fn test_trim_space() {
+        assert_eq!(trim_whitespace(String::from(" Hello   ")), String::from("Hello"));
+        assert_eq!(trim_whitespace(String::from("\tHello  \n")), String::from("Hello  "));
+        assert_eq!(trim_whitespace(String::from("\t Hello   ")), String::from(" Hello"));
+        assert_eq!(trim_whitespace(String::from("   Hello\n")), String::from("Hello"));
+    }
+
+    #[test]
+    fn test_trim_sepcific() {
+        assert_eq!(trim(String::from(" Hello   "), ' '), String::from("Hello"));
+        assert_eq!(trim(String::from("-Hello---"), '-'), String::from("Hello"));
+    }
+
+    #[test]
+    fn test_trim_whitespaces() {
+        let words: Vec<String> = vec![" Hello", "  Hello  ", "Hello"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let correct: Vec<String> = vec!["Hello", "Hello", "Hello"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let result = trim_whitespaces(words);
+        assert_eq!(result, correct);
+    }
+
+    #[test]
+    fn test_remove_counts() {
+        let words: Vec<String> = vec!["4 Hello", "120321 Password", "23124     PASSWORD", "Password", "123Password", "123 123Password1"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let correct: Vec<String> = vec!["Hello", "Password", "PASSWORD", "Password", "123Password", "123Password1"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let result = remove_counts(words);
         assert_eq!(result, correct);
     }
 }

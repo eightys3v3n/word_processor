@@ -3,10 +3,12 @@ extern crate clap;
 mod file_system;
 mod processors;
 
+use std::io;
+use std::io::Write;
 use clap::{App, Arg};
 use std::path::PathBuf;
 use std::process::exit;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 fn main() {
     let extensions: Vec<&str> = vec!["txt", "lst"];
@@ -49,22 +51,22 @@ fn main() {
     let words = file_system::read_files(files);
     println!("Found {} words.", words.len());
 
-    //println!("Removing counts...");
-    //let words = processors::remove_counts(words);
+    println!("Removing counts...");
+    let words = processors::remove_counts(words);
 
-    //println!("Trimming leading and tailing whitespace...");
-    //let words = processors::trim_whitespaces(words);
+    println!("Trimming leading and tailing whitespace...");
+    let words = processors::trim_whitespaces(words);
     
-    println!("Deduplicating...");
+    print!("Deduplicating...");
+    io::stdout().flush().unwrap();
     let now = Instant::now();
     let words = processors::deduplicate(words);
-    println!("Took {}ms", now.elapsed().as_millis());
+    println!(" {}ms", now.elapsed().as_millis());
     println!("Found {} unique words.", words.len());
 
     println!("Saving words...");
-    //file_system::write_words(&output_path, &words);
+    file_system::write_words(&output_path, &words);
 
 }
 
 // TODO: Profile this beast.
-// TODO: Time different deduplication options.

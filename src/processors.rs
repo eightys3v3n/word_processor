@@ -6,10 +6,6 @@ use lazy_static::lazy_static;
 
 /// Remove duplicated words by sorting them.
 pub fn deduplicate(mut words: Vec<String>) -> Vec<String> {
-    //words.sort_unstable();
-    //words.dedup();
-    //words
-
     let set: HashSet<_> = words.drain(..).collect(); // dedup
     words = set.into_iter().collect();
     words
@@ -48,13 +44,6 @@ pub fn remove_outside_lengths(words: Vec<String>, min: usize, max: usize) -> Vec
         .collect()
 }
 
-fn trim_whitespace(word: String) -> String {
-    let word = trim(word, ' ');
-    let word = trim(word, '\n');
-    let word = trim(word, '\t');
-    return word;
-}
-
 fn trim(word: String, c: char) -> String {
     let mut word = String::from(word);
     
@@ -74,6 +63,13 @@ fn trim(word: String, c: char) -> String {
 }
 
 pub fn trim_whitespaces(words: Vec<String>) -> Vec<String> {
+    fn trim_whitespace(word: String) -> String {
+        let word = trim(word, ' ');
+        let word = trim(word, '\n');
+        let word = trim(word, '\t');
+        return word;
+    }
+
     words
         .into_iter()
         .map(trim_whitespace)
@@ -115,7 +111,8 @@ mod test {
             .map(String::from)
             .collect();
 
-        let result = deduplicate(words);
+        let mut result = deduplicate(words);
+        result.sort_unstable();
 
         assert_eq!(result, correct);
     }
@@ -167,14 +164,6 @@ mod test {
     }
 
     #[test]
-    fn test_trim_space() {
-        assert_eq!(trim_whitespace(String::from(" Hello   ")), String::from("Hello"));
-        assert_eq!(trim_whitespace(String::from("\tHello  \n")), String::from("Hello  "));
-        assert_eq!(trim_whitespace(String::from("\t Hello   ")), String::from(" Hello"));
-        assert_eq!(trim_whitespace(String::from("   Hello\n")), String::from("Hello"));
-    }
-
-    #[test]
     fn test_trim_sepcific() {
         assert_eq!(trim(String::from(" Hello   "), ' '), String::from("Hello"));
         assert_eq!(trim(String::from("-Hello---"), '-'), String::from("Hello"));
@@ -182,11 +171,11 @@ mod test {
 
     #[test]
     fn test_trim_whitespaces() {
-        let words: Vec<String> = vec![" Hello", "  Hello  ", "Hello"]
+        let words: Vec<String> = vec![" Hello", "  Hello  ", "Hello", "\nHello\t", "\n\nHello  "]
             .into_iter()
             .map(String::from)
             .collect();
-        let correct: Vec<String> = vec!["Hello", "Hello", "Hello"]
+        let correct: Vec<String> = vec!["Hello", "Hello", "Hello", "Hello", "Hello"]
             .into_iter()
             .map(String::from)
             .collect();

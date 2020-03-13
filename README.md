@@ -30,10 +30,9 @@ Use `cargo build` to compile, `cargo test` to run the tests, and `cargo run -- -
 - Processing 1.4G of password lists into a single list containing around 30,000,000 unique passwords (as well as emails and some random junk mixed in).
 
 ## Things to consider
-- Profile the program as it takes way longer than a similar Python program.
-- Time different deduplication methods (sorting then dedup vs iterator deduplication).
-- Add some better doc-strings to everything.
-- Would be nice if it had a text language to specify the transformations instead of having to recompile.
+- Profile the program as it takes way longer than a similar Python program. (improved now, but still kinda slow if I recall)
+- Add some better doc-strings to everything. (in-progress)
+- Would be nice if it had a text language to specify the transformations and their order instead of having to recompile. For example -sl10:20 would mean containing symbols, length 10-20.
 - A help page for command line options (not sure if clap includes that).
 
 ## SecLists

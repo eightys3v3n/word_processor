@@ -24,6 +24,8 @@ Words are a password, each stored on a new line.
 ```
 Functions that take the `words: Vec<String>` argument are indented to be put where the example functions are.
 
+Use `cargo build` to compile, `cargo test` to run the tests, and `cargo run -- -s <source_folder> -o <output_file>` to run the program.
+
 ## Projects I've used this for
 - Processing 1.4G of password lists into a single list containing around 30,000,000 unique passwords (as well as emails and some random junk mixed in).
 

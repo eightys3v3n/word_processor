@@ -23,7 +23,6 @@ use std::collections::HashSet;
 /// assert!(output_words[1].as_str() == "World");
 /// ```
 pub fn deduplicate(mut words: Vec<String>) -> Vec<String> {
-
     let set: HashSet<_> = words.drain(..).collect(); // dedup
     words = set.into_iter().collect();
     words
@@ -208,7 +207,7 @@ pub fn remove_counts(words: Vec<String>) -> Vec<String> {
         word = String::from(word.trim());
         return word;
     };
-    
+   
     words.into_iter()
         .map(remove_count)
         .collect()
@@ -282,7 +281,7 @@ mod test {
     }
 
     #[test]
-    fn test_trim_whitespaces() {
+   fn test_trim_whitespaces() {
         let words: Vec<String> = vec![" Hello", "  Hello  ", "Hello", "\nHello\t", "\n\nHello  "]
             .into_iter()
             .map(String::from)

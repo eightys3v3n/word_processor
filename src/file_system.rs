@@ -10,7 +10,7 @@ pub fn list_files(root: &PathBuf, recursive: bool) -> Vec<PathBuf> {
 
     for res in fs::read_dir(root).unwrap() {
         let path = match res {
-            Err(why) => panic!("failed to read directory {}", why.description()),
+            Err(why) => panic!("failed to read directory {}", why.to_string()),
             Ok(data) => data.path(),
         };
 
@@ -31,7 +31,7 @@ fn read_lines(path: &PathBuf) -> Vec<String> {
     let display = path.display();
 
     let file = match fs::File::open(path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why.description()),
+        Err(why) => panic!("couldn't open {}: {}", display, why.to_string()),
         Ok(file) => file,
     };
 
@@ -41,7 +41,7 @@ fn read_lines(path: &PathBuf) -> Vec<String> {
     for line in lines {
         let l: String = match line {
             Err(why) => {
-                eprintln!("error in file {}: {}", display, why.description());
+                eprintln!("error in file {}: {}", display, why.to_string());
                 String::from("")
             }
             Ok(data) => data,
@@ -87,13 +87,13 @@ pub fn write_words(path: &PathBuf, words: &Vec<String>) {
     let display = path.display();
 
     let mut file = match fs::File::create(&path) {
-        Err(why) => panic!("couldn't create {}: {}", display, why.description()),
+        Err(why) => panic!("couldn't create {}: {}", display, why.to_string()),
         Ok(file) => file,
     };
 
     for word in words {
         match file.write(format!("{}{}", word, sep).as_bytes()) {
-            Err(why) => panic!("couldn't write to {}: {}", display, why.description()),
+            Err(why) => panic!("couldn't write to {}: {}", display, why.to_string()),
             Ok(_) => (),
         };
     }
@@ -111,7 +111,7 @@ mod tests {
                 Err(why) => eprintln!(
                     "couldn't create directory {}: {}",
                     display,
-                    why.description()
+                    why.to_string()
                 ),
                 Ok(_) => (),
             }
@@ -121,7 +121,7 @@ mod tests {
             let display = path.display();
 
             match fs::File::create(path) {
-                Err(why) => eprintln!("couldn't create file {}: {}", display, why.description()),
+                Err(why) => eprintln!("couldn't create file {}: {}", display, why.to_string()),
                 Ok(_) => (),
             }
         }
@@ -153,7 +153,7 @@ mod tests {
             Err(why) => panic!(
                 "failed to remove directory {}: {}",
                 display,
-                why.description()
+                why.to_string()
             ),
             Ok(_) => (),
         }
@@ -216,12 +216,12 @@ mod tests {
         let display = path.display();
 
         let mut file = match fs::File::create(&path) {
-            Err(why) => panic!("couldn't create {}: {}", display, why.description()),
+            Err(why) => panic!("couldn't create {}: {}", display, why.to_string()),
             Ok(file) => file,
         };
 
         match file.write_all(content.as_bytes()) {
-            Err(why) => panic!("couldn't write to {}: {}", display, why.description()),
+            Err(why) => panic!("couldn't write to {}: {}", display, why.to_string()),
             Ok(_) => (),
         }
 

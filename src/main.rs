@@ -70,6 +70,10 @@ fn main() {
     println!("Removing any words longer than 50 characters... (some of the lists I sourced off Github had HTML pointing to their site)");
     let words = processors::remove_outside_lengths(words, 0, 50);
     println!("{} words left.", words.len());
+
+    println!("Inserting 'root ' at the beginning of every password");
+    let words = processors::prefix("root ", words);
+    println!("Inserted 'root ' prefix.");
     
     println!("Saving words...");
     file_system::write_words(&output_path, &words);

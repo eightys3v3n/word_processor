@@ -213,6 +213,37 @@ pub fn remove_counts(words: Vec<String>) -> Vec<String> {
         .collect()
 }
 
+/// Returns a list of words, in an order reliant on .map, where the prefix is inserted to every word.
+///
+/// # Arguments
+///
+/// * `prefix` - A string to insert before the word.
+/// * `words` - A vector of all the words to process, one word per string.
+///
+/// # Example
+///
+/// ```
+/// // Create an input list of words.
+/// let input_words: Vec<String> = vec!["Hello ", "World"]
+///     .into_iter().map(String::from).collect();
+///
+/// let output_words = prefix("Jorge ", input_words);
+///
+/// assert!(output_words.len() == 2);
+/// assert!(output_words[0].as_str() == "Jorge Hello");
+/// assert!(output_words[1].as_str() == "Jorge World");
+/// ```
+pub fn prefix(prefix: &str, words: Vec<String>) -> Vec<String> {
+    let prefixed = |word: String| -> String {
+        let prefixed_word: String = format!("{}{}", prefix, word);
+        return prefixed_word;
+    };
+   
+    words.into_iter()
+        .map(prefixed)
+        .collect()
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -308,6 +339,21 @@ mod test {
         assert_eq!(result, correct);
     }
 
+    #[test]
+    fn test_prefix() {
+        let words: Vec<String> = vec!["Hello", "Password", "PASSWORD"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let correct: Vec<String> = vec!["John Hello", "John Password", "John PASSWORD"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let prefix: str = "John ";
+        let result = prefix(prefix, words);
+        assert_eq!(result, correct);
+    }
+    
     #[test]
     fn test_is_number() {
         assert_eq!(is_number(&String::from("hello")), false);
